@@ -1,9 +1,7 @@
-name: 80%
+name: Verus Mining 80%
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 */6 * * *"
 
 jobs:
   mine:
@@ -14,16 +12,19 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install wget unzip cpulimit -y
+        sudo apt install git build-essential automake autoconf libtool \
+        pkg-config libcurl4-openssl-dev libjansson-dev libssl-dev \
+        cpulimit -y
 
-    - name: Download ccminer Verus
+    - name: Clone cpuminer source
       run: |
-        wget https://github.com/JayDDee/cpuminer-opt/releases/download/v3.23.5/cpuminer-opt-linux.tar.gz
-        tar -xvf cpuminer-opt-linux.tar.gz
-        chmod +x cpuminer
+        git clone https://github.com/JayDDee/cpuminer-opt.git
+        cd cpuminer-opt
+        ./build.sh
 
-    - name: Start Mining (80% CPU limit)
+    - name: Start mining (80% CPU)
       run: |
+        cd cpuminer-opt
         cpulimit -l 80 -- ./cpuminer \
         -a verus \
         -o stratum+tcp://na.luckpool.net:3956 \
