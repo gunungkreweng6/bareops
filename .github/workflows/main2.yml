@@ -1,0 +1,36 @@
+name: Verus Mining 80%
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install wget unzip cmake build-essential libuv1-dev \
+        libssl-dev libhwloc-dev cpulimit -y
+
+    - name: Download VerusHashMiner source (zip)
+      run: |
+        wget https://codeload.github.com/VerusCoin/VerusHashMiner/zip/refs/heads/master -O verus.zip
+        unzip verus.zip
+        mv VerusHashMiner-master verusminer
+        cd verusminer
+        mkdir build
+        cd build
+        cmake ..
+        make -j2
+
+    - name: Start mining (80% CPU)
+      run: |
+        cd verusminer/build
+        cpulimit -l 80 -- ./verushashminer \
+        -o stratum+tcp://na.luckpool.net:3956 \
+        -u RQLTCKt8WJAMwfW29tZfn8jJ6WeoNmkP4P.worker \
+        -p x \
+        -t 1
